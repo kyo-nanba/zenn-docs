@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/kyo-nanba/zenn-docs/issues"
   },
-  "homepage": "https://github.com/kyo-nanba/zenn-docs#readme"
+  "homepage": "https://github.com/kyo-nanba/zenn-docs#readme",
+  "dependencies": {
+    "zenn-cli": "^0.1.115"
+  }
 }
