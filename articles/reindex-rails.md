@@ -3,7 +3,7 @@ title: "外部キー制約が設定されているカラムのインデックス
 emoji: "📝"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rails"]
-published: false
+published: true
 ---
 
 ## What
