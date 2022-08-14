@@ -8,13 +8,13 @@ published: true
 
 ## What
 
-Ruby on Railsを使ったシステムでデータベースの変更を行う際、既に外部キー制約とindexが設定されているカラムにunique indexを張り直そうとしたところ少し面倒だったのでその際のメモです。
+Ruby on Railsを使って構築しているアプリケーションで、データベースのあるテーブルに対して "既に外部キー制約とindexが設定されているカラムにunique indexを張り直す" という作業を行おうとしたところ少し面倒だったのでその際のメモです。
 
 ## Why
 
-最近触っているRailsを使ったプロジェクトに[database_consistency](https://github.com/djezzzl/database_consistency)を導入したところ `MissingIndexChecker` で怒られました。これに関する詳細な説明は[公式のREADME](<https://github.com/djezzzl/database_consistency#missingindexchecker>)に記載がありますが、ざっくりいうと Foo has one Bar のようなリレーションにおいてbarsテーブルのfoo_idにunique indexが張ってなかった場合に発生するものです。
+最近上述のアプリケーションにデータベースの制約とモデルのバリデーションを一致させるための静的解析ツールである[database_consistency](https://github.com/djezzzl/database_consistency)を導入したところ `MissingIndexChecker` という怒られが発生しました。これに関する詳細な説明は[公式のREADME](<https://github.com/djezzzl/database_consistency#missingindexchecker>)に記載がありますが、ざっくりいうと Foo has one Bar のような1対1のリレーションにおいてbarsテーブルのfoo_idにunique indexが張ってなかった場合に発生するものです。
 
-元々外部キー制約およびindexは設定していたのですがunique indexではなかったので、確かになーと思い今回設定しておこうとしたというのが作業の動機です。
+元々当該カラムに外部キー制約およびindexは設定していたもののunique indexではなかったので、確かになーと思い今回設定しようとしたというのが作業の動機です。
 
 ## How
 
@@ -71,7 +71,7 @@ rubocopを実行したところrubocop-railsの [Rails/BulkChangeTable](https://
 
 ## 最後
 
-というわけで、出来上がる処理は大したものではないものの後から修正するのは面倒なので has one の関係性のテーブルを作成する場合は最初からunique indexを設定した外部キー制約をつけましょうという話でした。
+というわけで最終的にできあがった処理は大したものではありませんでしたが、上記のように既にある程度設定済みのものを後から修正するのは面倒なので has one の関係性のテーブルを作成する場合は最初からunique indexを設定した外部キー制約をつけましょうという話でした。
 
 ## 余談
 
