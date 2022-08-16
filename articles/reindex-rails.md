@@ -39,13 +39,35 @@ end
 
 `add_index :bars, :foo_id, unique: true` とだけ書いて実行しようとする。
 
+```rb
+def change
+  add_index :bars, :foo_id, unique: true
+end
+```
+
 ### 既にindexがあるぞと怒られる
 
 確かに。と思い前行に `remove_index :bars, :foo_id` を加える。
 
+```rb
+def change
+  remove_index :bars, :foo_id
+  add_index :bars, :foo_id, unique: true
+end
+```
+
 ### 外部キー制約があるカラムからindexは消せないぞと怒られる
 
 確かに。と思い `remove_foreign_key :bars, foos` と `add_foreign_key :bars, foos` を処理の最初と最後に加える。
+
+```rb
+def change
+  remove_foreign_key :bars, foos
+  remove_index :bars, :foo_id
+  add_index :bars, :foo_id, unique: true
+  add_foreign_key :bars, foos
+end
+```
 
 一応動いたようで `bin/rails db:rollback` も `bin/rails db:migrate:redo` も意図した動きになったので大丈夫そうだ。
 
@@ -61,11 +83,35 @@ rubocopを実行したところrubocop-railsの [Rails/BulkChangeTable](https://
 
 確かに。と思い `change_table :bars, bulk: true` を使った書き方に修正。
 
+```rb
+def change
+  change_table :bars, bulk: true do |t|
+    t.remove_foreign_key :foos
+    t.remove_index :foo_id
+    t.index :foo_id, unique: true
+    t.foreign_key :foos
+  end
+end
+```
+
 ### Possibly dangerous operationと怒られる
 
 これは[strong_migrations](https://github.com/ankane/strong_migrations)という別のgemの話なので本稿とは直接は関係ないが、危険な可能性のある処理だとわかって行う必要がある作業なので気をつけましょうという話。
 
 確かに。と思いながら `safety_assured` のブロックで囲む。
+
+```rb
+def change
+  safety_assured do
+    change_table :bars, bulk: true do |t|
+      t.remove_foreign_key :foos
+      t.remove_index :foo_id
+      t.index :foo_id, unique: true
+      t.foreign_key :foos
+    end
+  end
+end
+```
 
 大丈夫そう。というわけで最初のコードが出来上がり。
 
